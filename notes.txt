@@ -1,0 +1,30 @@
+Ovládání - viz help v aplikaci (pod klávesou H) nebo:                      
+
+H - Help " +
+LeftClick and drag - Changing observer's view" +
+W,A,S,D,R,F - Movement - forward, left, backward, right, up, down" +
+E - Change polygon mode: "
+                   ["
+                     0: Standard (Fill)"
+                     1: Lines, "
+                     2: Points "
+                   ]" +
+Q - Textures [on / off]" +
+G - Animations [on / off]" +
+1 - Ambient lighting [on / off]" +
+2 - Diffuse lighting [on / off]" +
+3 - Specular lighting [on / off]" +
+4 - Switch shape of plane [1 / 2]" +
+5 - Show next cylindrical object [on / off]" +
+6 - Show next spherical object [on / off]" +
+I,J,K,L,V,C- Movement of light source - forward, left, backward, turn right, turn left" +
+T - Reflector lighting [on / off]" +
+B - Change debug mode: "
+                   ["
+                     0: Standard, "
+                     1: Position, "
+                     2: Depth buffer "
+                     3: Normal, "
+                     4: Texture coordinate "
+                     5: Distance from light source "
+                   ]",
