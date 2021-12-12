@@ -1,6 +1,8 @@
 package main;
 
 import lwjglutils.*;
+import main.particles.ParticleSystem;
+import main.utils.TimeManager;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -36,10 +38,12 @@ public class Renderer extends AbstractRenderer {
     private int polygonMode;
     private int debugMode;
 
-    private int shaderProgramViewer, shaderProgramLight;
+    private int shaderProgramViewer, shaderProgramLight, shaderProgramParticles;
     private int locView, locProjection, locSolid, locLightPosition, locEyePosition, locLightVP, locTime, locTextureMode, locAmbientEnabled;
     private int locDiffuseEnabled, locSpecularEnabled, locQuadraticAttenuation, locSpotDirection, locSpotCutOff, locRotation, locReflectorDisabled, locDebugMode;
     private int locViewLight, locProjectionLight, locSolidLight, locTimeLight, locRotationLight;
+
+    private int locProjectionParticles, locViewParticles, locAccelerationParticles, locTimeParticles, locCycleTimeParticles;
 
     private boolean ambientEnabled = true;
     private boolean diffuseEnabled = true;
@@ -54,10 +58,12 @@ public class Renderer extends AbstractRenderer {
     private boolean mousePressed;
 
     private OGLBuffers buffers;
+    private OGLBuffers buffersParticles;
     private OGLRenderTarget renderTarget;
     private OGLTexture2D defaultTexture;
     private OGLTexture2D donutTexture;
     private OGLTexture2D waterTexture;
+    private OGLTexture2D particleStarTexture;
     private OGLTexture.Viewer viewer;
     private Camera camera, cameraLight;
 
@@ -68,9 +74,16 @@ public class Renderer extends AbstractRenderer {
         OGLUtils.printJAVAparameters();
         OGLUtils.shaderCheck();
 
+        /*
+        glEnable(GL_BLEND);
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+         */
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         shaderProgramViewer = ShaderUtils.loadProgram("/start");
         shaderProgramLight = ShaderUtils.loadProgram("/light");
+        shaderProgramParticles = ShaderUtils.loadProgram("/particles");
 
         locView = glGetUniformLocation(shaderProgramViewer, "view");
         locProjection = glGetUniformLocation(shaderProgramViewer, "projection");
@@ -96,7 +109,14 @@ public class Renderer extends AbstractRenderer {
         locTimeLight = glGetUniformLocation(shaderProgramLight, "time");
         locRotationLight = glGetUniformLocation(shaderProgramLight, "rotation");
 
+        locProjectionParticles = glGetUniformLocation(shaderProgramParticles, "projection");
+        locViewParticles = glGetUniformLocation(shaderProgramParticles, "view");
+        locAccelerationParticles = glGetUniformLocation(shaderProgramParticles, "acceleration");
+        locTimeParticles = glGetUniformLocation(shaderProgramParticles, "time");
+        locCycleTimeParticles = glGetUniformLocation(shaderProgramParticles, "cycleTime");
+
         buffers = GridFactory.createGrid(200, 200);
+        buffersParticles = ParticleSystem.createParticles();
         renderTarget = new OGLRenderTarget(1024, 1024);
         viewer = new OGLTexture2D.Viewer();
 
@@ -115,6 +135,7 @@ public class Renderer extends AbstractRenderer {
         try {
             defaultTexture = new OGLTexture2D("textures/default.jpg");
             waterTexture = new OGLTexture2D("textures/water.jpg");
+            particleStarTexture = new OGLTexture2D("textures/particleStar.png");
             donutTexture = new OGLTexture2D("textures/donut.jpg");
         } catch (IOException e) {
             e.printStackTrace();
@@ -130,11 +151,16 @@ public class Renderer extends AbstractRenderer {
         }
 
         glPolygonMode(GL_FRONT_AND_BACK, POLYGON_MODES.get(polygonMode % 3));
-        renderFromLight();
-        renderFromViewer();
+       // glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+        //renderFromLight();
+        renderFromParticles();
+       // renderFromViewer();
 
+        /*
         viewer.view(renderTarget.getColorTexture(), -1.0, -1.0, 0.7);
         viewer.view(renderTarget.getDepthTexture(), -1.0, -0.3, 0.7);
+
+         */
         textRenderer.addStr2D(width - 150, height - 3, "H for help, DebugMode = " + debugMode % 6);
     }
 
@@ -183,6 +209,31 @@ public class Renderer extends AbstractRenderer {
         defaultTexture.bind(shaderProgramViewer, "default", 0);
 
         drawObjects(locSolid, locRotation, shaderProgramViewer, true);
+    }
+
+    private void renderFromParticles() {
+        glUseProgram(shaderProgramParticles);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glViewport(0, 0, width, height);
+
+        glClearColor(0f, 0.5f, 0f, 1f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glUniformMatrix4fv(locViewParticles, false, camera.getViewMatrix().floatArray());
+        glUniformMatrix4fv(locProjectionParticles, false, projection.floatArray());
+
+        glUniform1f(locTimeParticles, TimeManager.getTime());
+        /*
+            glUniform1f(locAccelerationParticles, -9.8f);
+        glUniform1f(locCycleTimeParticles, 3.0f);
+         */
+        glUniform1f(locAccelerationParticles, -1.8f);
+        glUniform1f(locCycleTimeParticles, 2.0f);
+
+        particleStarTexture.bind(shaderProgramParticles, "particleStar", 0);
+        buffersParticles.draw(GL_POINTS, shaderProgramParticles);
     }
 
     private void drawObjects(int solidLoc, int rotationLoc, int shaderProgram, boolean bindTexture) {

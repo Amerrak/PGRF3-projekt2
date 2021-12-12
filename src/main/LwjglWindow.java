@@ -1,10 +1,12 @@
 package main;
 
+import main.utils.TimeManager;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.sql.Time;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -178,9 +180,12 @@ public class LwjglWindow {
 
         renderer.init();
 
+        TimeManager.init();
+
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(window)) {
+
 
             renderer.display();
 
@@ -189,6 +194,8 @@ public class LwjglWindow {
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
+
+            TimeManager.calculateDeltaTime();
         }
     }
 
