@@ -7,10 +7,10 @@ public class ParticleSystem {
     public static OGLBuffers createParticles() {
 
         //        float[] velocity = new float[100000];
-        float[] velocity = new float[400];
+        float[] velocity = new float[100000];
         int[] ib = new int[velocity.length/4];
         int index = 0;
-        float cycleTime = 3.0f;
+        float cycleTime = 6.0f;
 
         for(int i = 0; i < velocity.length/4;i++)
         {

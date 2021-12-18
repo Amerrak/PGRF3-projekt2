@@ -5,9 +5,11 @@ uniform mat4 view;
 
 layout (points) in;
 layout (triangle_strip, max_vertices = 24) out;
+in float t[];
 
 out vec3 finalColor;
 out vec2 textureCoord;
+out float lifeLength;
 
 const float size = 0.1;
 const vec3 lightDirection = normalize(vec3(0.4, -1.0, 0.8));
@@ -19,6 +21,7 @@ void createVertex(vec3 offset, vec3 faceNormal, vec2 text){
     float brightness = max(dot(-lightDirection, faceNormal), 0.3);
     finalColor = vec3(1.0,1.0,1.0) * brightness;
     textureCoord = text;
+    lifeLength = t[0];
     EmitVertex();
 }
 

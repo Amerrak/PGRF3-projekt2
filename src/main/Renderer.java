@@ -135,7 +135,7 @@ public class Renderer extends AbstractRenderer {
         try {
             defaultTexture = new OGLTexture2D("textures/default.jpg");
             waterTexture = new OGLTexture2D("textures/water.jpg");
-            particleStarTexture = new OGLTexture2D("textures/particleStar.png");
+            particleStarTexture = new OGLTexture2D("textures/fire.png");
             donutTexture = new OGLTexture2D("textures/donut.jpg");
         } catch (IOException e) {
             e.printStackTrace();
@@ -230,7 +230,7 @@ public class Renderer extends AbstractRenderer {
         glUniform1f(locCycleTimeParticles, 3.0f);
          */
         glUniform1f(locAccelerationParticles, -1.8f);
-        glUniform1f(locCycleTimeParticles, 2.0f);
+        glUniform1f(locCycleTimeParticles, 6.0f);
 
         particleStarTexture.bind(shaderProgramParticles, "particleStar", 0);
         buffersParticles.draw(GL_POINTS, shaderProgramParticles);
