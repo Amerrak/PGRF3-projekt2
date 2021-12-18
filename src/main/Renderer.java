@@ -33,8 +33,10 @@ public class Renderer extends AbstractRenderer {
     private double oldMx, oldMy;
 
     private int shaderProgramParticles;
-
     private int locProjectionParticles, locViewParticles, locAccelerationParticles, locTimeParticles, locCycleTimeParticles;
+
+    private int shaderProgramParticlesPointSprite;
+    private int locProjectionParticlesPointSprite, locViewParticlesPointSprite, locAccelerationParticlesPointSprite, locTimeParticlesPointSprite, locCycleTimeParticlesPointSprite;
 
     private boolean perspectiveProjection = true;
     private boolean mousePressed;
@@ -53,12 +55,19 @@ public class Renderer extends AbstractRenderer {
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         shaderProgramParticles = ShaderUtils.loadProgram("/particles");
+        shaderProgramParticlesPointSprite = ShaderUtils.loadProgram("/particlesPointSprite");
 
         locProjectionParticles = glGetUniformLocation(shaderProgramParticles, "projection");
         locViewParticles = glGetUniformLocation(shaderProgramParticles, "view");
         locAccelerationParticles = glGetUniformLocation(shaderProgramParticles, "acceleration");
         locTimeParticles = glGetUniformLocation(shaderProgramParticles, "time");
         locCycleTimeParticles = glGetUniformLocation(shaderProgramParticles, "cycleTime");
+
+        locProjectionParticlesPointSprite = glGetUniformLocation(shaderProgramParticles, "projection");
+        locViewParticlesPointSprite = glGetUniformLocation(shaderProgramParticles, "view");
+        locAccelerationParticlesPointSprite = glGetUniformLocation(shaderProgramParticles, "acceleration");
+        locTimeParticlesPointSprite = glGetUniformLocation(shaderProgramParticles, "time");
+        locCycleTimeParticlesPointSprite = glGetUniformLocation(shaderProgramParticles, "cycleTime");
 
         buffersParticles = ParticleSystem.createParticles();
 
@@ -80,13 +89,16 @@ public class Renderer extends AbstractRenderer {
     public void display() {
         glEnable(GL_DEPTH_TEST);
 
-        renderFromParticles();
+        renderFromParticlesPointSprite();
 
         textRenderer.addStr2D(width - 150, height - 3, "H for help");
     }
 
     private void renderFromParticles() {
         glUseProgram(shaderProgramParticles);
+
+        glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+        glDisable(GL_POINT_SPRITE);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -104,6 +116,30 @@ public class Renderer extends AbstractRenderer {
 
         particleStarTexture.bind(shaderProgramParticles, "particleStar", 0);
         buffersParticles.draw(GL_POINTS, shaderProgramParticles);
+    }
+
+    private void renderFromParticlesPointSprite() {
+        glUseProgram(shaderProgramParticlesPointSprite);
+
+        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+        glEnable(GL_POINT_SPRITE);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glViewport(0, 0, width, height);
+
+        glClearColor(0f, 0.5f, 0f, 1f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glUniformMatrix4fv(locViewParticlesPointSprite, false, camera.getViewMatrix().floatArray());
+        glUniformMatrix4fv(locProjectionParticlesPointSprite, false, projection.floatArray());
+
+        glUniform1f(locTimeParticlesPointSprite, TimeManager.getTime());
+        glUniform1f(locAccelerationParticlesPointSprite, -1.8f);
+        glUniform1f(locCycleTimeParticlesPointSprite, 6.0f);
+
+        particleStarTexture.bind(shaderProgramParticlesPointSprite, "particleStar", 0);
+        buffersParticles.draw(GL_POINTS, shaderProgramParticlesPointSprite);
     }
 
     @Override
