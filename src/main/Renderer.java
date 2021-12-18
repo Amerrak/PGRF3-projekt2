@@ -42,7 +42,7 @@ public class Renderer extends AbstractRenderer {
     private OGLBuffers buffersParticles;
 
     private OGLTexture2D particleStarTexture;
-    private Camera camera, cameraLight;
+    private Camera camera;
 
     @Override
     public void init() {
@@ -68,11 +68,6 @@ public class Renderer extends AbstractRenderer {
                 .withZenith(-1.3 / 5f * Math.PI);
 
         textRenderer = new OGLTextRenderer(width, height);
-
-        cameraLight = new Camera()
-                .withPosition(new Vec3D(-3, 3, 3))
-                .withAzimuth(-1 / 4f * Math.PI)
-                .withZenith(-1.3 / 5f * Math.PI);
 
         try {
             particleStarTexture = new OGLTexture2D("textures/fire.png");
@@ -171,42 +166,12 @@ public class Renderer extends AbstractRenderer {
                             projection = ORTHOGONAL_PROJECTION;
                         }
                     }
-                    case GLFW_KEY_V -> cameraLight = cameraLight.addAzimuth(0.1);
-                    case GLFW_KEY_C -> cameraLight = cameraLight.addAzimuth(-0.1);
 
-                    case GLFW_KEY_I -> cameraLight = cameraLight.forward(0.1);
-                    case GLFW_KEY_K -> cameraLight = cameraLight.backward(0.1);
-                    case GLFW_KEY_J -> cameraLight = cameraLight.left(0.1);
-                    case GLFW_KEY_L -> cameraLight = cameraLight.right(0.1);
                     case GLFW_KEY_H -> JOptionPane.showMessageDialog(null,
                             " H - Help " +
                                     "\n LeftClick and drag - Changing observer's view" +
-                                    "\n W,A,S,D,R,F - Movement - forward, left, backward, right, up, down" +
-                                    "\n E - Change polygon mode: "
-                                    + "\n                   ["
-                                    + "\n                     0: Standard (Fill)"
-                                    + "\n                     1: Lines, "
-                                    + "\n                     2: Points "
-                                    + "\n                   ]" +
-                                    "\n Q - Textures [on / off]" +
-                                    "\n G - Animations [on / off]" +
-                                    "\n 1 - Ambient lighting [on / off]" +
-                                    "\n 2 - Diffuse lighting [on / off]" +
-                                    "\n 3 - Specular lighting [on / off]" +
-                                    "\n 4 - Switch shape of plane [1 / 2]" +
-                                    "\n 5 - Show next cylindrical object [on / off]" +
-                                    "\n 6 - Show next spherical object [on / off]" +
-                                    "\n I,J,K,L,V,C- Movement of light source - forward, left, backward, turn right, turn left" +
-                                    "\n T - Reflector lighting [on / off]" +
-                                    "\n B - Change debug mode: "
-                                    + "\n                   ["
-                                    + "\n                     0: Standard, "
-                                    + "\n                     1: Position, "
-                                    + "\n                     2: Depth buffer "
-                                    + "\n                     3: Normal, "
-                                    + "\n                     4: Texture coordinate "
-                                    + "\n                     5: Distance from light source "
-                                    + "\n                   ]",
+                                    "\n P - Change projection - Perspective / Orthogonal" +
+                                    "\n W,A,S,D,R,F - Movement - forward, left, backward, right, up, down",
                             "Help",
                             JOptionPane.INFORMATION_MESSAGE);
 
