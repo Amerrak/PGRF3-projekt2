@@ -1,12 +1,12 @@
 #version 150
 
+in vec4 velocity;
+
 uniform mat4 projection;
 uniform mat4 view;
 uniform float acceleration;
 uniform float time;
 uniform float cycleTime;
-
-in vec4 velocity;
 
 out float t;
 

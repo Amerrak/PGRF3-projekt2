@@ -4,45 +4,39 @@ in float lifeLength;
 
 uniform float time;
 uniform float cycleTime;
+uniform int rowCount;
+uniform int columnCount;
+uniform int cubeMode;
 
-
-
-
-uniform sampler2D particleStar;
+uniform sampler2D textureSampler;
 
 void main(void)
 {
-    float stageCount = 8.0*8.0;
+    if(cubeMode == 1){
+        gl_FragColor = vec4(finalColor,1.0);
+    }else {
+        // Počet textur v atlasu
+        float stageCount = rowCount*columnCount;
 
-    float calculatedTime = lifeLength/cycleTime; // t od 0 do 1
-    float atlasProgression = calculatedTime * stageCount; // od 0 do 16
-    int index = floor(atlasProgression); // index od 0 do 16
-    int column = mod(index, 8);
-    int row = index / 8;
+        // Převedení času na interval <0,1>
+        float calculatedTime = lifeLength/cycleTime;
 
-    vec2 offset = vec2(float(column) / 8, float(row) / 8);
+        // Výpočet aktuální pozice v atlasu
+        float atlasProgression = calculatedTime * stageCount;
+        int index = floor(atlasProgression);
+        int column = mod(index, columnCount);
+        int row = index / rowCount;
 
-    vec2 textureCoordWithOffset = textureCoord / vec2(8,8) + offset;
+        // Výpočet offsetu pro texturu
+        vec2 offset = vec2(float(column) / columnCount, float(row) / rowCount);
+        vec2 textureCoordWithOffset = textureCoord / vec2(columnCount,rowCount) + offset;
 
-    // textureCoord <0;1>
-    // column <0;4>
-    // row <0;4>
-    // offset <0;1>
+        vec2 uv = textureCoordWithOffset.xy;
+        vec4 t = texture(textureSampler, uv);
 
-
-    vec2 uv = textureCoordWithOffset.xy;
-   // uv.y *= -1.0;
-
-
-
-    vec4 t = texture(particleStar, uv);
-
-    if(t.a < 0.1){
-        discard;
+        if(t.a < 0.1){
+            discard;
+        }
+        gl_FragColor = vec4(t);
     }
-    gl_FragColor = vec4(t); // * finalColor
-
-
-
-    //gl_FragColor = vec4(finalColor,1.0);
 }

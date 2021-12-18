@@ -6,7 +6,6 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
-import java.sql.Time;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,8 +14,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class LwjglWindow {
 
-    public static int WIDTH = 600;
-    public static int HEIGHT = 400;
+    public static int WIDTH = 1920;
+    public static int HEIGHT = 1080;
 
     // The window handle
     private long window;
