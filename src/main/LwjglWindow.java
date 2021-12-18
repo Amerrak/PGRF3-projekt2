@@ -179,14 +179,10 @@ public class LwjglWindow {
         }
 
         renderer.init();
-
         TimeManager.init();
-
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(window)) {
-
-
             renderer.display();
 
             glfwSwapBuffers(window); // swap the color buffers
